@@ -3,6 +3,7 @@ package controller;
 import java.io.File;
 import java.net.URL;
 import java.util.ResourceBundle;
+import java.util.concurrent.TimeUnit;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -13,11 +14,15 @@ import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ProgressBar;
+import javafx.scene.media.Media;
+import javafx.scene.media.MediaPlayer;
 import javafx.stage.FileChooser;
 
 public class MainController implements Initializable {
 
 	private File music = null;
+	private Media hit = null;
+	private MediaPlayer mediaPlayer = null;
 
 	@FXML
 	private Button openFileButton;
@@ -69,12 +74,51 @@ public class MainController implements Initializable {
 					} else {
 						clearOpenFileInfoLabelText();
 
+						setMusic();
+
 					}
 				} catch (Exception e) {
 					setOpenFileInfoLabelText("Wyst¹pi³ b³¹d przy próbie wczytania pliku.");
 				}
 			}
 		});
+	}
+
+	private void setMusic() {
+
+		this.hit = new Media(this.music.toURI().toString());
+		this.mediaPlayer = new MediaPlayer(hit);
+
+		mediaPlayer.setOnReady(new Runnable() {
+
+			@Override
+			public void run() {
+
+				setSongTimeLabelText(secondsToMinutes(mediaPlayer.getCurrentTime().toSeconds()) + " / "
+						+ secondsToMinutes(hit.getDuration().toSeconds()));
+
+			}
+		});
+
+		setSongNameLabelText(this.music.getName());
+
+		// this.mediaPlayer.getCurrentTime();
+		// this.mediaPlayer.getStopTime();
+		// System.out.println(this.mediaPlayer.getTotalDuration());
+		// System.out.println(this.mediaPlayer.getCurrentTime());
+		// mediaPlayer.play();
+
+	}
+
+	private String secondsToMinutes(Double seconds) {
+
+		Double minutes = 0.0;
+
+		minutes = minutes + (seconds.intValue() / 60);
+		int rest = seconds.intValue() % 60;
+
+		return minutes.intValue() + " : " + rest;
+
 	}
 
 	private File getFile() {
@@ -109,6 +153,22 @@ public class MainController implements Initializable {
 			return true;
 
 		}
+	}
+
+	private void setSongNameLabelText(String text) {
+		this.songName.setText(text);
+	}
+
+	private void clearSongNameLabelText() {
+		this.songName.setText("");
+	}
+
+	private void setSongTimeLabelText(String text) {
+		this.songTime.setText(text);
+	}
+
+	private void clearSongTimeLabelText() {
+		this.songTime.setText("");
 	}
 
 	private void setOpenFileInfoLabelText(String text) {
