@@ -1,7 +1,10 @@
 package controller;
 
+import java.io.File;
 import java.net.URL;
 import java.util.ResourceBundle;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
@@ -10,8 +13,11 @@ import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ProgressBar;
+import javafx.stage.FileChooser;
 
 public class MainController implements Initializable {
+
+	private File music = null;
 
 	@FXML
 	private Button openFileButton;
@@ -39,9 +45,9 @@ public class MainController implements Initializable {
 
 	@Override
 	public void initialize(URL arg0, ResourceBundle arg1) {
-		
+
 		setOpenFileButtonClickEvent();
-		
+
 	}
 
 	private void setOpenFileButtonClickEvent() {
@@ -50,10 +56,67 @@ public class MainController implements Initializable {
 			@Override
 			public void handle(ActionEvent arg0) {
 
-				System.out.println("Witaj swiecie");
+				try {
 
+					music = getFile();
+
+					if (isFileNotNull()) {
+						setOpenFileInfoLabelText("Nie otworzono ¿adnego pliku.");
+
+					} else if (isFileMP3File()) {
+						setOpenFileInfoLabelText("Podany plik nie jest plikiem foramtu mp3.");
+
+					} else {
+						clearOpenFileInfoLabelText();
+
+					}
+				} catch (Exception e) {
+					setOpenFileInfoLabelText("Wyst¹pi³ b³¹d przy próbie wczytania pliku.");
+				}
 			}
 		});
+	}
+
+	private File getFile() {
+
+		FileChooser chooser = new FileChooser();
+		chooser.setTitle("Wybierz utwór");
+		File selectedFile = chooser.showOpenDialog(null);
+
+		return selectedFile;
+
+	}
+
+	private boolean isFileNotNull() {
+
+		if (this.music == null) {
+			return true;
+		} else {
+			return false;
+		}
+
+	}
+
+	private boolean isFileMP3File() {
+
+		Pattern pattern = Pattern.compile("(mp3)$");
+		Matcher matcher = pattern.matcher(this.music.getName());
+
+		if (matcher.find()) {
+			return false;
+
+		} else {
+			return true;
+
+		}
+	}
+
+	private void setOpenFileInfoLabelText(String text) {
+		this.openFileInfoLabel.setText(text);
+	}
+
+	private void clearOpenFileInfoLabelText() {
+		this.openFileInfoLabel.setText("");
 	}
 
 	private Button getOpenFileButton() {
