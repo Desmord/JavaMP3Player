@@ -7,31 +7,22 @@
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
-<?import javafx.scene.text.Font?>
-
 
 <AnchorPane xmlns="http://javafx.com/javafx/9.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controller.MainController">
    <children>
       <VBox>
          <children>
-            <HBox prefHeight="100.0" prefWidth="400.0">
+            <HBox prefHeight="50.0" prefWidth="400.0">
                <VBox.margin>
                   <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
                </VBox.margin>
                <children>
-                  <VBox>
-                     <children>
-                        <Button fx:id="openFileButton" mnemonicParsing="false" prefHeight="35.0" prefWidth="150.0" text="Wybierz Plik" />
-                        <Label fx:id="openFileInfoLabel" prefHeight="35.0" prefWidth="360.0" textAlignment="CENTER">
-                           <font>
-                              <Font size="16.0" />
-                           </font>
-                           <VBox.margin>
-                              <Insets top="10.0" />
-                           </VBox.margin>
-                        </Label>
-                     </children>
-                  </VBox>
+                  <Button fx:id="openFileButton" mnemonicParsing="false" prefHeight="35.0" prefWidth="130.0" text="Wybierz Plik" />
+                  <Label fx:id="openFileInfoLabel" prefHeight="35.0" prefWidth="250.0" textAlignment="CENTER" textFill="#b21a1a">
+                     <HBox.margin>
+                        <Insets left="10.0" />
+                     </HBox.margin>
+                  </Label>
                </children>
             </HBox>
             <ProgressBar fx:id="progresBar" prefWidth="390.0" progress="0.0">
