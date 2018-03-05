@@ -52,11 +52,14 @@ public class MainController implements Initializable {
 	public void initialize(URL arg0, ResourceBundle arg1) {
 
 		setOpenFileButtonClickEvent();
+		setPlayButtonClickEvent();
+		setPauseButtonClickEvent();
+		setStopButtonClickEvent();
 
 	}
 
 	private void setOpenFileButtonClickEvent() {
-		getOpenFileButton().setOnAction(new EventHandler<ActionEvent>() {
+		this.openFileButton.setOnAction(new EventHandler<ActionEvent>() {
 
 			@Override
 			public void handle(ActionEvent arg0) {
@@ -89,7 +92,7 @@ public class MainController implements Initializable {
 		this.hit = new Media(this.music.toURI().toString());
 		this.mediaPlayer = new MediaPlayer(hit);
 
-		mediaPlayer.setOnReady(new Runnable() {
+		this.mediaPlayer.setOnReady(new Runnable() {
 
 			@Override
 			public void run() {
@@ -97,16 +100,12 @@ public class MainController implements Initializable {
 				setSongTimeLabelText(secondsToMinutes(mediaPlayer.getCurrentTime().toSeconds()) + " / "
 						+ secondsToMinutes(hit.getDuration().toSeconds()));
 
+				setProgresBarProgres(0.0);
+
 			}
 		});
 
 		setSongNameLabelText(this.music.getName());
-
-		// this.mediaPlayer.getCurrentTime();
-		// this.mediaPlayer.getStopTime();
-		// System.out.println(this.mediaPlayer.getTotalDuration());
-		// System.out.println(this.mediaPlayer.getCurrentTime());
-		// mediaPlayer.play();
 
 	}
 
@@ -153,6 +152,74 @@ public class MainController implements Initializable {
 			return true;
 
 		}
+	}
+
+	private void setPlayButtonClickEvent() {
+
+		this.playButton.setOnAction(new EventHandler<ActionEvent>() {
+
+			@Override
+			public void handle(ActionEvent arg0) {
+
+				if (mediaPlayer == null) {
+					setOpenFileInfoLabelText("Nie wczytano ¿adnego utworu.");
+				} else {
+					clearOpenFileInfoLabelText();
+					mediaPlayer.play();
+				}
+
+			}
+		});
+
+	}
+
+	private void setPauseButtonClickEvent() {
+		
+		this.pauseButton.setOnAction(new EventHandler<ActionEvent>() {
+
+			@Override
+			public void handle(ActionEvent arg0) {
+
+				if (mediaPlayer == null) {
+					setOpenFileInfoLabelText("Nie wczytano ¿adnego utworu.");
+				} else {
+					clearOpenFileInfoLabelText();
+					mediaPlayer.pause();
+				}
+
+			}
+		});
+		
+	}
+
+	private void setStopButtonClickEvent() {
+		
+		this.stopButton.setOnAction(new EventHandler<ActionEvent>() {
+
+			@Override
+			public void handle(ActionEvent arg0) {
+
+				if (mediaPlayer == null) {
+					setOpenFileInfoLabelText("Nie wczytano ¿adnego utworu.");
+				} else {
+					clearOpenFileInfoLabelText();
+					mediaPlayer.stop();
+				}
+
+			}
+		});
+		
+	}
+	
+	
+	// this.mediaPlayer.getCurrentTime();
+	// this.mediaPlayer.getStopTime();
+	// System.out.println(this.mediaPlayer.getTotalDuration());
+	// System.out.println(this.mediaPlayer.getCurrentTime());
+	// mediaPlayer.play();
+
+	private void setProgresBarProgres(double percent) {
+		this.progresBar.setProgress(percent);
 	}
 
 	private void setSongNameLabelText(String text) {
