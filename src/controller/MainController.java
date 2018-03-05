@@ -3,10 +3,10 @@ package controller;
 import java.io.File;
 import java.net.URL;
 import java.util.ResourceBundle;
-import java.util.concurrent.TimeUnit;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
@@ -17,12 +17,15 @@ import javafx.scene.control.ProgressBar;
 import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
 import javafx.stage.FileChooser;
+import javafx.util.Duration;
 
 public class MainController implements Initializable {
 
 	private File music = null;
 	private Media hit = null;
 	private MediaPlayer mediaPlayer = null;
+	private Thread playThread = null;
+	private boolean playStatus = true;
 
 	@FXML
 	private Button openFileButton;
@@ -163,9 +166,25 @@ public class MainController implements Initializable {
 
 				if (mediaPlayer == null) {
 					setOpenFileInfoLabelText("Nie wczytano ¿adnego utworu.");
+
 				} else {
 					clearOpenFileInfoLabelText();
+
 					mediaPlayer.play();
+
+					playStatus = true;
+
+					// Create new Thread if there is non existing or alive
+					if (playThread == null || playThread.getState().toString() == "TERMINATED") {
+						setPlayThread();
+						playThread.start();
+
+					}
+
+					System.out.println(mediaPlayer.getCurrentTime().toSeconds());
+					System.out.println(mediaPlayer.getTotalDuration().toSeconds());
+					System.out.println(hit.getDuration());
+
 				}
 
 			}
@@ -174,7 +193,7 @@ public class MainController implements Initializable {
 	}
 
 	private void setPauseButtonClickEvent() {
-		
+
 		this.pauseButton.setOnAction(new EventHandler<ActionEvent>() {
 
 			@Override
@@ -182,18 +201,21 @@ public class MainController implements Initializable {
 
 				if (mediaPlayer == null) {
 					setOpenFileInfoLabelText("Nie wczytano ¿adnego utworu.");
+
 				} else {
 					clearOpenFileInfoLabelText();
 					mediaPlayer.pause();
+					playStatus = false;
+
 				}
 
 			}
 		});
-		
+
 	}
 
 	private void setStopButtonClickEvent() {
-		
+
 		this.stopButton.setOnAction(new EventHandler<ActionEvent>() {
 
 			@Override
@@ -201,22 +223,67 @@ public class MainController implements Initializable {
 
 				if (mediaPlayer == null) {
 					setOpenFileInfoLabelText("Nie wczytano ¿adnego utworu.");
+
 				} else {
-					clearOpenFileInfoLabelText();
 					mediaPlayer.stop();
+					mediaPlayer.seek(new Duration(0));
+
+					playStatus = false;
+					
+					clearOpenFileInfoLabelText();
+					setSongTimeLabelText(secondsToMinutes(mediaPlayer.getCurrentTime().toSeconds()) + " / "
+							+ secondsToMinutes(hit.getDuration().toSeconds()));
+
 				}
 
 			}
 		});
-		
+
 	}
-	
-	
-	// this.mediaPlayer.getCurrentTime();
-	// this.mediaPlayer.getStopTime();
-	// System.out.println(this.mediaPlayer.getTotalDuration());
-	// System.out.println(this.mediaPlayer.getCurrentTime());
-	// mediaPlayer.play();
+
+	private void setPlayThread() {
+
+		playThread = new Thread(new Runnable() {
+
+			@Override
+			public void run() {
+
+				while (playStatus) {
+
+					try {
+
+						Platform.runLater(new Runnable() {
+							@Override
+							public void run() {
+								setSongTimeLabelText(secondsToMinutes(mediaPlayer.getCurrentTime().toSeconds()) + " / "
+										+ secondsToMinutes(hit.getDuration().toSeconds()));
+
+							}
+						});
+
+						setProgresBarProgres(getCurrentMediaTimePrecent());
+
+						Thread.sleep(500);
+
+					} catch (InterruptedException e) {
+						Thread.currentThread().interrupt();
+					} catch (Exception e) {
+						System.err.println("b³ad " + e);
+					}
+
+				}
+			}
+		});
+
+	}
+
+	private double getCurrentMediaTimePrecent() {
+
+		double percent = this.mediaPlayer.getCurrentTime().toSeconds()
+				/ this.mediaPlayer.getTotalDuration().toSeconds();
+
+		return percent;
+	}
 
 	private void setProgresBarProgres(double percent) {
 		this.progresBar.setProgress(percent);
@@ -226,16 +293,8 @@ public class MainController implements Initializable {
 		this.songName.setText(text);
 	}
 
-	private void clearSongNameLabelText() {
-		this.songName.setText("");
-	}
-
 	private void setSongTimeLabelText(String text) {
 		this.songTime.setText(text);
-	}
-
-	private void clearSongTimeLabelText() {
-		this.songTime.setText("");
 	}
 
 	private void setOpenFileInfoLabelText(String text) {
@@ -308,6 +367,46 @@ public class MainController implements Initializable {
 
 	private void setPlayButton(Button playButton) {
 		this.playButton = playButton;
+	}
+
+	private File getMusic() {
+		return music;
+	}
+
+	private void setMusic(File music) {
+		this.music = music;
+	}
+
+	private Media getHit() {
+		return hit;
+	}
+
+	private void setHit(Media hit) {
+		this.hit = hit;
+	}
+
+	private MediaPlayer getMediaPlayer() {
+		return mediaPlayer;
+	}
+
+	private void setMediaPlayer(MediaPlayer mediaPlayer) {
+		this.mediaPlayer = mediaPlayer;
+	}
+
+	private Thread getPlayThread() {
+		return playThread;
+	}
+
+	private void setPlayThread(Thread playThread) {
+		this.playThread = playThread;
+	}
+
+	private boolean isPlayStatus() {
+		return playStatus;
+	}
+
+	private void setPlayStatus(boolean playStatus) {
+		this.playStatus = playStatus;
 	}
 
 }
