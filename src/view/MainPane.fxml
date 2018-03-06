@@ -35,14 +35,14 @@
                   <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
                </VBox.margin>
                <children>
-                  <Label fx:id="songName" prefWidth="300.0">
+                  <Label fx:id="songName" alignment="CENTER" lineSpacing="1.0" prefHeight="60.0" prefWidth="300.0" textOverrun="CLIP" wrapText="true">
                      <VBox.margin>
                         <Insets left="50.0" />
                      </VBox.margin>
                   </Label>
-                  <Label fx:id="songTime" prefWidth="300.0">
+                  <Label fx:id="songTime" alignment="TOP_CENTER" prefWidth="120.0" textOverrun="WORD_ELLIPSIS" underline="true">
                      <VBox.margin>
-                        <Insets left="50.0" top="10.0" />
+                        <Insets left="140.0" top="10.0" />
                      </VBox.margin>
                   </Label>
                </children>
