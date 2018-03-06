@@ -58,7 +58,7 @@ public class MainController implements Initializable {
 		setPlayButtonClickEvent();
 		setPauseButtonClickEvent();
 		setStopButtonClickEvent();
-
+		
 	}
 
 	private void setOpenFileButtonClickEvent() {
@@ -81,6 +81,8 @@ public class MainController implements Initializable {
 						clearOpenFileInfoLabelText();
 
 						setMusic();
+						
+						setEndMusicEvent();
 
 					}
 				} catch (Exception e) {
@@ -91,6 +93,10 @@ public class MainController implements Initializable {
 	}
 
 	private void setMusic() {
+		
+		if(this.mediaPlayer != null ) {
+			this.mediaPlayer.stop();
+		}
 
 		this.hit = new Media(this.music.toURI().toString());
 		this.mediaPlayer = new MediaPlayer(hit);
@@ -206,6 +212,7 @@ public class MainController implements Initializable {
 
 				} else {
 					clearOpenFileInfoLabelText();
+					progresBar.setProgress(0.0);
 					mediaPlayer.pause();
 					playStatus = false;
 
@@ -287,6 +294,20 @@ public class MainController implements Initializable {
 		return percent;
 	}
 
+	private void setEndMusicEvent() {
+		
+		mediaPlayer.setStopTime(mediaPlayer.getTotalDuration());
+		
+		mediaPlayer.setOnEndOfMedia(new Runnable() {
+
+			@Override
+			public void run() {
+
+				System.out.println("Koniec utworzu");
+				
+			}});
+	}
+	
 	private void setProgresBarProgres(double percent) {
 		this.progresBar.setProgress(percent);
 	}
