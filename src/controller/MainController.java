@@ -101,7 +101,7 @@ public class MainController implements Initializable {
 			public void run() {
 
 				setSongTimeLabelText(secondsToMinutes(mediaPlayer.getCurrentTime().toSeconds()) + " / "
-						+ secondsToMinutes(hit.getDuration().toSeconds()));
+						+ secondsToMinutes(mediaPlayer.getTotalDuration().toSeconds()));
 
 				setProgresBarProgres(0.0);
 
@@ -114,12 +114,20 @@ public class MainController implements Initializable {
 
 	private String secondsToMinutes(Double seconds) {
 
-		Double minutes = 0.0;
-
-		minutes = minutes + (seconds.intValue() / 60);
+		int minutes = (seconds.intValue() / 60);
 		int rest = seconds.intValue() % 60;
 
-		return minutes.intValue() + " : " + rest;
+		return formatText(minutes) + "m" + " : " + formatText(rest) + "s";
+
+	}
+
+	private String formatText(int number) {
+
+		if (number < 10) {
+			return "0" + number;
+		}
+
+		return number + "";
 
 	}
 
@@ -180,13 +188,7 @@ public class MainController implements Initializable {
 						playThread.start();
 
 					}
-
-					System.out.println(mediaPlayer.getCurrentTime().toSeconds());
-					System.out.println(mediaPlayer.getTotalDuration().toSeconds());
-					System.out.println(hit.getDuration());
-
 				}
-
 			}
 		});
 
@@ -229,7 +231,7 @@ public class MainController implements Initializable {
 					mediaPlayer.seek(new Duration(0));
 
 					playStatus = false;
-					
+
 					clearOpenFileInfoLabelText();
 					setSongTimeLabelText(secondsToMinutes(mediaPlayer.getCurrentTime().toSeconds()) + " / "
 							+ secondsToMinutes(hit.getDuration().toSeconds()));
